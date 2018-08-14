@@ -6,7 +6,32 @@ import smbus
 #from Lego import *
 import socket
 import select
+import Adafruit_TCS34725
 
+# color sensor
+while True:
+        tcs = Adafruit_TCS34725.TCS34725()
+        tcs.set_interrupt(False)
+        r, g, b, c = tcs.get_raw_data()
+        # Print out the values.
+        print('Color: red={0} green={1} blue={2} clear={3}'.format(r, g, b, c))
+        if ((r > 110) and (g > 210) and (b > 270)):
+        # Enable interrupts and put the chip back to low power sleep/disabled.
+                tcs.set_interrupt(True)
+                tcs.disable()
+                print('blue')
+                path = [3,3,2,4,2,3,2,1]
+                break
+        elif ((r > 280) and (g < 210) and (b < 150)):
+                tcs.set_interrupt(True)
+                tcs.disable()
+                path = [3,3,1,4,1,3,1,2]
+                print('red')
+                break
+
+        else:
+                path = [0,0,0]
+                time.sleep(1)
 #myEV3 = ev3.EV3(protocol = ev3.BLUETOOTH, host = '00:16:53:5c:d7:5c')
 
 #for communicating with other agents
@@ -292,7 +317,7 @@ def dist():
         return (t2-t1)*34000/2
 
 
-path = [3,3,2]
+
 index = 0
 #check to see if agent is at an intersection and decide on behavior
 def checkIntersect(TR, alphabot, obstacle = False):
@@ -307,6 +332,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
         sleep_time = 0.5
         turn_time = 0.025
 
+
         sensor_values = TR.readCalibrated()
 
 
@@ -316,9 +342,11 @@ def checkIntersect(TR, alphabot, obstacle = False):
             (sensor_values[4] >= black_threshold)):
                 print("At 4-way or T-intersection!")
                 global index
+                print(index)
                 alphabot.stop()
                 time.sleep(sleep_time)
-                if (index <= 2):
+
+                if (index <= 7):
                         rand_num = path [index]
                         index = index + 1
 
@@ -553,6 +581,30 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                                     (sensor_values[4] < white_threshold)):
                                                         break
 
+                                                time.sleep(turn_time)
+                                        print("done!")
+                                        alphabot.stop()
+                                        time.sleep(sleep_time)
+                                        return True
+                        elif rand_num == 0: #stop
+                                        alphabot.stop()
+                                        return True
+                        elif rand_num == 4: #straight and backward
+                                        print("Arrived!")
+                                        alphabot.setPWMA(maximum)
+                                        alphabot.setPWMB(maximum)
+                                        alphabot.forward()
+                                        time.sleep(0.3)
+                                        alphabot.stop()
+                                        time.sleep(5)
+                                        alphabot.backward()
+                                        while True:
+                                                sensor_values = TR.readCalibrated()
+
+                                                if ((sensor_values[0] >= black_threshold) and (sensor_values[1] >= black_threshold) and
+                                                    (sensor_values[2] >= black_threshold) and (sensor_values[3] >= black_threshold) and
+                                                    (sensor_values[4] >= black_threshold)):
+                                                        break
                                                 time.sleep(turn_time)
                                         print("done!")
                                         alphabot.stop()
