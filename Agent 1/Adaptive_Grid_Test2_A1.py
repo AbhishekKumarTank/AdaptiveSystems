@@ -15,11 +15,11 @@ s1.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s1.bind(('192.168.1.224', 12345)) #use its own IP address
 
 #for communicating with Processing
-s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s2.bind(('192.168.1.224', 5204)) #use its own IP address
-s2.listen(1)
-conn, addr = s2.accept()
-print('Connected by', addr)
+# s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# s2.bind(('192.168.1.224', 5204)) #use its own IP address
+# s2.listen(1)
+# conn, addr = s2.accept()
+# print('Connected by', addr)
 
 #for line tracker
 CS = 5
@@ -292,7 +292,8 @@ def dist():
         return (t2-t1)*34000/2
 
 
-
+path = [3,3,2]
+index = 0
 #check to see if agent is at an intersection and decide on behavior
 def checkIntersect(TR, alphabot, obstacle = False):
 
@@ -308,261 +309,264 @@ def checkIntersect(TR, alphabot, obstacle = False):
 
         sensor_values = TR.readCalibrated()
 
+
         #if all sensors over black line, then agent at 4-way intersection ot T-intersection
         if ((sensor_values[0] >= black_threshold) and (sensor_values[1] >= black_threshold) and
             (sensor_values[2] >= black_threshold) and (sensor_values[3] >= black_threshold) and
             (sensor_values[4] >= black_threshold)):
                 print("At 4-way or T-intersection!")
+                global index
                 alphabot.stop()
                 time.sleep(sleep_time)
-                path = [3,3,2]
-                for i in range(0, 2):
+                if (index <= 2):
+                        rand_num = path [index]
+                        index = index + 1
 
-                        rand_num = path [i]
-
-                        # update location
+                                # update location
                         global curr
                         global next
                         global dir
                         curr = next
                         if (curr == 0):
-                                if (dir == "N"):
-                                        if (rand_num == 1):
-                                                next = 3
-                                        elif (rand_num == 2):
-                                                next = 1
-                                        elif (rand_num == 3):
-                                                next = 4
+                                        if (dir == "N"):
+                                                if (rand_num == 1):
+                                                        next = 3
+                                                elif (rand_num == 2):
+                                                        next = 1
+                                                elif (rand_num == 3):
+                                                        next = 4
 
-                                elif (dir == "S"):
-                                        if (rand_num == 1):
-                                                next = 1
-                                        elif (rand_num == 2):
-                                                next = 3
-                                        elif (rand_num == 3):
-                                                next = 0
-                                elif (dir == "W"):
-                                        if (rand_num == 1):
-                                                next = 4
-                                        elif (rand_num == 2):
-                                                next = 0
-                                        elif (rand_num == 3):
-                                                next = 1
-                                elif (dir == "E"):
-                                        if (rand_num == 1):
-                                                next = 0
-                                        elif (rand_num == 2):
-                                                next = 4
-                                        elif (rand_num == 3):
-                                                next = 3
-                                dir = "N"
+                                        elif (dir == "S"):
+                                                if (rand_num == 1):
+                                                        next = 1
+                                                elif (rand_num == 2):
+                                                        next = 3
+                                                elif (rand_num == 3):
+                                                        next = 0
+                                        elif (dir == "W"):
+                                                if (rand_num == 1):
+                                                        next = 4
+                                                elif (rand_num == 2):
+                                                        next = 0
+                                                elif (rand_num == 3):
+                                                        next = 1
+                                        elif (dir == "E"):
+                                                if (rand_num == 1):
+                                                        next = 0
+                                                elif (rand_num == 2):
+                                                        next = 4
+                                                elif (rand_num == 3):
+                                                        next = 3
+                                        dir = "N"
                         if (curr == 1):
-                                if (dir == "N"):
-                                        if (rand_num == 1):
-                                                next = 4
-                                        elif (rand_num == 2):
-                                                next = 1
-                                        elif (rand_num == 3):
-                                                next = 2
+                                        if (dir == "N"):
+                                                if (rand_num == 1):
+                                                        next = 4
+                                                elif (rand_num == 2):
+                                                        next = 1
+                                                elif (rand_num == 3):
+                                                        next = 2
 
-                                elif (dir == "S"):
-                                        if (rand_num == 1):
-                                                next = 1
-                                        elif (rand_num == 2):
-                                                next = 4
-                                        elif (rand_num == 3):
-                                                next = 0
-                                elif (dir == "W"):
-                                        if (rand_num == 1):
-                                                next = 2
-                                        elif (rand_num == 2):
-                                                next = 0
-                                        elif (rand_num == 3):
-                                                next = 1
-                                elif (dir == "E"):
-                                        if (rand_num == 1):
-                                                next = 0
-                                        elif (rand_num == 2):
-                                                next = 2
-                                        elif (rand_num == 3):
-                                                next = 4
-                                dir = "E"
+                                        elif (dir == "S"):
+                                                if (rand_num == 1):
+                                                        next = 1
+                                                elif (rand_num == 2):
+                                                        next = 4
+                                                elif (rand_num == 3):
+                                                        next = 0
+                                        elif (dir == "W"):
+                                                if (rand_num == 1):
+                                                        next = 2
+                                                elif (rand_num == 2):
+                                                        next = 0
+                                                elif (rand_num == 3):
+                                                        next = 1
+                                        elif (dir == "E"):
+                                                if (rand_num == 1):
+                                                        next = 0
+                                                elif (rand_num == 2):
+                                                        next = 2
+                                                elif (rand_num == 3):
+                                                        next = 4
+                                        dir = "E"
                         if (curr == 2):
-                                if (dir == "N"):
-                                        if (rand_num == 1):
-                                                next = 3
-                                        elif (rand_num == 2):
-                                                next = 1
-                                        elif (rand_num == 3):
-                                                next = 2
+                                        if (dir == "N"):
+                                                if (rand_num == 1):
+                                                        next = 3
+                                                elif (rand_num == 2):
+                                                        next = 1
+                                                elif (rand_num == 3):
+                                                        next = 2
 
-                                elif (dir == "S"):
-                                        if (rand_num == 1):
-                                                next = 1
-                                        elif (rand_num == 2):
-                                                next = 3
-                                        elif (rand_num == 3):
-                                                next = 4
-                                elif (dir == "W"):
-                                        if (rand_num == 1):
-                                                next = 2
-                                        elif (rand_num == 2):
-                                                next = 4
-                                        elif (rand_num == 3):
-                                                next = 1
-                                elif (dir == "E"):
-                                        if (rand_num == 1):
-                                                next = 4
-                                        elif (rand_num == 2):
-                                                next = 2
-                                        elif (rand_num == 3):
-                                                next = 3
-                                dir = "S"
+                                        elif (dir == "S"):
+                                                if (rand_num == 1):
+                                                        next = 1
+                                                elif (rand_num == 2):
+                                                        next = 3
+                                                elif (rand_num == 3):
+                                                        next = 4
+                                        elif (dir == "W"):
+                                                if (rand_num == 1):
+                                                        next = 2
+                                                elif (rand_num == 2):
+                                                        next = 4
+                                                elif (rand_num == 3):
+                                                        next = 1
+                                        elif (dir == "E"):
+                                                if (rand_num == 1):
+                                                        next = 4
+                                                elif (rand_num == 2):
+                                                        next = 2
+                                                elif (rand_num == 3):
+                                                        next = 3
+                                        dir = "S"
                         if (curr == 3):
-                                if (dir == "N"):
-                                        if (rand_num == 1):
-                                                next = 3
-                                        elif (rand_num == 2):
-                                                next = 4
-                                        elif (rand_num == 3):
-                                                next = 2
+                                        if (dir == "N"):
+                                                if (rand_num == 1):
+                                                        next = 3
+                                                elif (rand_num == 2):
+                                                        next = 4
+                                                elif (rand_num == 3):
+                                                        next = 2
 
-                                elif (dir == "S"):
-                                        if (rand_num == 1):
-                                                next = 4
-                                        elif (rand_num == 2):
-                                                next = 3
-                                        elif (rand_num == 3):
-                                                next = 0
-                                elif (dir == "W"):
-                                        if (rand_num == 1):
-                                                next = 2
-                                        elif (rand_num == 2):
-                                                next = 0
-                                        elif (rand_num == 3):
-                                                next = 4
-                                elif (dir == "E"):
-                                        if (rand_num == 1):
-                                                next = 0
-                                        elif (rand_num == 2):
-                                                next = 2
-                                        elif (rand_num == 3):
-                                                next = 3
-                                dir = "W"
+                                        elif (dir == "S"):
+                                                if (rand_num == 1):
+                                                        next = 4
+                                                elif (rand_num == 2):
+                                                        next = 3
+                                                elif (rand_num == 3):
+                                                        next = 0
+                                        elif (dir == "W"):
+                                                if (rand_num == 1):
+                                                        next = 2
+                                                elif (rand_num == 2):
+                                                        next = 0
+                                                elif (rand_num == 3):
+                                                        next = 4
+                                        elif (dir == "E"):
+                                                if (rand_num == 1):
+                                                        next = 0
+                                                elif (rand_num == 2):
+                                                        next = 2
+                                                elif (rand_num == 3):
+                                                        next = 3
+                                        dir = "W"
                         if (curr == 4):
-                                if (dir == "N"):
-                                        if (rand_num == 1):
-                                                next = 3
-                                                dir = "E"
-                                        elif (rand_num == 2):
-                                                next = 1
-                                                dir = "W"
-                                        elif (rand_num == 3):
-                                                next = 2
-                                                dir = "N"
+                                        if (dir == "N"):
+                                                if (rand_num == 1):
+                                                        next = 3
+                                                        dir = "E"
+                                                elif (rand_num == 2):
+                                                        next = 1
+                                                        dir = "W"
+                                                elif (rand_num == 3):
+                                                        next = 2
+                                                        dir = "N"
 
-                                elif (dir == "S"):
-                                        if (rand_num == 1):
-                                                next = 1
-                                                dir = "W"
-                                        elif (rand_num == 2):
-                                                next = 3
-                                                dir = "E"
-                                        elif (rand_num == 3):
-                                                next = 0
-                                                dir = "S"
-                                elif (dir == "W"):
-                                        if (rand_num == 1):
-                                                next = 2
-                                                dir = "N"
-                                        elif (rand_num == 2):
-                                                next = 0
-                                                dir = "S"
-                                        elif (rand_num == 3):
-                                                next = 1
-                                                dir = "W"
-                                elif (dir == "E"):
-                                        if (rand_num == 1):
-                                                next = 0
-                                                dir = "S"
-                                        elif (rand_num == 2):
-                                                next = 2
-                                                dir = "N"
-                                        elif (rand_num == 3):
-                                                next = 3
-                                                dir = "E"
+                                        elif (dir == "S"):
+                                                if (rand_num == 1):
+                                                        next = 1
+                                                        dir = "W"
+                                                elif (rand_num == 2):
+                                                        next = 3
+                                                        dir = "E"
+                                                elif (rand_num == 3):
+                                                        next = 0
+                                                        dir = "S"
+                                        elif (dir == "W"):
+                                                if (rand_num == 1):
+                                                        next = 2
+                                                        dir = "N"
+                                                elif (rand_num == 2):
+                                                        next = 0
+                                                        dir = "S"
+                                                elif (rand_num == 3):
+                                                        next = 1
+                                                        dir = "W"
+                                        elif (dir == "E"):
+                                                if (rand_num == 1):
+                                                        next = 0
+                                                        dir = "S"
+                                                elif (rand_num == 2):
+                                                        next = 2
+                                                        dir = "N"
+                                                elif (rand_num == 3):
+                                                        next = 3
+                                                        dir = "E"
 
 
                         if rand_num == 1: #right turn
-                                print("right turn!")
-                                alphabot.setPWMB(maximum)
-                                alphabot.right()
-                                while True:
-                                        #check sensors to determine when turn complete
-                                        #agent sometimes overshoots intersection when stopping
-                                        #first check if right most sensor sees black
-                                        #then if right most sensor sees white after, the turn is complete
-                                        sensor_values = TR.readCalibrated()
+                                        print("right turn!")
+                                        alphabot.setPWMB(maximum)
+                                        alphabot.right()
+                                        while True:
+                                                #check sensors to determine when turn complete
+                                                #agent sometimes overshoots intersection when stopping
+                                                #first check if right most sensor sees black
+                                                #then if right most sensor sees white after, the turn is complete
+                                                sensor_values = TR.readCalibrated()
 
-                                        if sensor_values[4] >= black_threshold:
-                                                right_flag = True
+                                                if sensor_values[4] >= black_threshold:
+                                                        right_flag = True
 
-                                        if sensor_values[4] < white_threshold and right_flag:
-                                                break
+                                                if sensor_values[4] < white_threshold and right_flag:
+                                                        break
 
-                                        time.sleep(turn_time)
-                                print("turn done!")
-                                alphabot.stop()
-                                time.sleep(sleep_time)
-                                return True
+                                                time.sleep(turn_time)
+                                        print("turn done!")
+                                        alphabot.stop()
+                                        time.sleep(sleep_time)
+                                        return True
                         elif rand_num == 2: #left turn
-                                print("left turn!")
-                                alphabot.setPWMA(maximum)
-                                alphabot.left()
-                                while True:
-                                        #check sensors to determine when turn complete
-                                        #agent sometimes overshoots intersection when stopping
-                                        #first check if left most sensor sees black
-                                        #then if left most sensor sees white after, the turn is complete
-                                        sensor_values = TR.readCalibrated()
+                                        print("left turn!")
+                                        alphabot.setPWMA(maximum)
+                                        alphabot.left()
+                                        while True:
+                                                #check sensors to determine when turn complete
+                                                #agent sometimes overshoots intersection when stopping
+                                                #first check if left most sensor sees black
+                                                #then if left most sensor sees white after, the turn is complete
+                                                sensor_values = TR.readCalibrated()
 
-                                        if sensor_values[0] >= black_threshold:
-                                                left_flag = True
+                                                if sensor_values[0] >= black_threshold:
+                                                        left_flag = True
 
-                                        if sensor_values[0] < white_threshold and left_flag:
-                                                break
+                                                if sensor_values[0] < white_threshold and left_flag:
+                                                        break
 
-                                        time.sleep(turn_time)
-                                print("turn done!")
-                                alphabot.stop()
-                                time.sleep(sleep_time)
-                                return True
+                                                time.sleep(turn_time)
+                                        print("turn done!")
+                                        alphabot.stop()
+                                        time.sleep(sleep_time)
+                                        return True
                         elif rand_num == 3: #straight
-                                print("straight!")
-                                alphabot.setPWMA(maximum)
-                                alphabot.setPWMB(maximum)
-                                alphabot.forward()
-                                while True:
-                                        #check sensors to determine when intersection passed
-                                        #if left and right most sensors see white, then intersection passed
-                                        sensor_values = TR.readCalibrated()
+                                        print("straight!")
+                                        alphabot.setPWMA(maximum)
+                                        alphabot.setPWMB(maximum)
+                                        alphabot.forward()
+                                        while True:
+                                                #check sensors to determine when intersection passed
+                                                #if left and right most sensors see white, then intersection passed
+                                                sensor_values = TR.readCalibrated()
 
-                                        if ((sensor_values[0] < white_threshold) and
-                                            (sensor_values[4] < white_threshold)):
-                                                break
+                                                if ((sensor_values[0] < white_threshold) and
+                                                    (sensor_values[4] < white_threshold)):
+                                                        break
 
-                                        time.sleep(turn_time)
-                                print("done!")
-                                alphabot.stop()
-                                time.sleep(sleep_time)
-                                return True
+                                                time.sleep(turn_time)
+                                        print("done!")
+                                        alphabot.stop()
+                                        time.sleep(sleep_time)
+                                        return True
                         else:
-                                print("random number error!")
-                                alphabot.backward()
-                                time.sleep(sleep_time)
-                                alphabot.stop()
-                                time.sleep(sleep_time)
-                                return True
+                                        print("random number error!")
+                                        alphabot.backward()
+                                        time.sleep(sleep_time)
+                                        alphabot.stop()
+                                        time.sleep(sleep_time)
+                                        return True
+                else:
+                        alphabot.stop()
         else:
                 return False
 
@@ -605,21 +609,21 @@ try:
         while True:
                 while dist() > obstacle_dist:
                         #check if Processing sees another agent
-                        processing_ready = select.select([conn], [], [], 0)
-                        while processing_ready[0]:
-                                data = conn.recv(1024)
-                                print(data.decode('utf-8'))
-                                if data.decode('utf-8').endswith( 'hello Agent 3'):
-                                        print('stop')
-                                        print("moving from", curr, "to", next, dir)
-                                        Ab.stop()
-                                        time.sleep(1)
-                                        print('restart')
-                                        s1.sendto(b'hello Agent 3', ('192.168.1.253', 12345))
-
-                                else:
-                                        break
-                                processing_ready = select.select([conn], [], [], 0)
+                        # processing_ready = select.select([conn], [], [], 0)
+                        # while processing_ready[0]:
+                        #         data = conn.recv(1024)
+                        #         print(data.decode('utf-8'))
+                        #         if data.decode('utf-8').endswith( 'hello Agent 3'):
+                        #                 print('stop')
+                        #                 print("moving from", curr, "to", next, dir)
+                        #                 Ab.stop()
+                        #                 time.sleep(1)
+                        #                 print('restart')
+                        #                 s1.sendto(b'hello Agent 3', ('192.168.1.253', 12345))
+                        #
+                        #         else:
+                        #                 break
+                        #         processing_ready = select.select([conn], [], [], 0)
 
                         #check if receiving messages from other agents
                         message_ready = select.select([s1], [], [], 0)
