@@ -37,7 +37,7 @@ class TRSensor(object):
                 self.calibratedMin = [0] * self.numSensors
                 self.calibratedMax = [1023] * self.numSensors
                 self.last_value = 0
-                
+
         """
         Reads the sensor values into an array. There *MUST* be space
         for as many values as there were sensors specified in the constructor.
@@ -79,7 +79,7 @@ class TRSensor(object):
 #                       time.sleep(0.0001)
                         GPIO.output(CS,GPIO.HIGH)
                 return value[1:]
-                
+
         """
         Reads the sensors 10 times and uses the results for
         calibration.  The sensor values are not returned; instead, the
@@ -90,11 +90,11 @@ class TRSensor(object):
                 max_sensor_values = [0]*self.numSensors
                 min_sensor_values = [0]*self.numSensors
                 for j in range(0,10):
-                
+
                         sensor_values = self.AnalogRead();
-                        
+
                         for i in range(0,self.numSensors):
-                        
+
                                 # set the max we found THIS time
                                 if((j == 0) or max_sensor_values[i] < sensor_values[i]):
                                         max_sensor_values[i] = sensor_values[i]
@@ -128,17 +128,17 @@ class TRSensor(object):
 
                         if(denominator != 0):
                                 value = (sensor_values[i] - self.calibratedMin[i])* 1000 / denominator
-                                
+
                         if(value < 0):
                                 value = 0
                         elif(value > 1000):
                                 value = 1000
-                                
+
                         sensor_values[i] = value
-                
+
                 #print("readCalibrated",sensor_values)
                 return sensor_values
-                        
+
         """
         Operates the same as read calibrated, but also returns an
         estimated position of the robot with respect to a line. The
@@ -164,7 +164,7 @@ class TRSensor(object):
 
                 black_threshold = 200 #to determine if sensor is over black line
                                 #adjust based on tests -- sensors values range from 0 - 1000
-                maximum = 27
+                maximum = 25
                 sleep_time = 0.5
                 turn_time = 0.025
 
@@ -179,18 +179,18 @@ class TRSensor(object):
                         # keep track of whether we see the line at all
                         if(value > 200):
                                 on_line = 1
-                                
+
                         # only average in values that are above a noise threshold
                         if(value > 50):
                                 avg += value * (i * 1000);  # this is for the weighted total,
-                                sum += value;                  #this is for the denominator 
+                                sum += value;                  #this is for the denominator
 
                 if(on_line != 1):
 ##                      # If it last read to the left of center, return 0.
 ##                      if(self.last_value < (self.numSensors - 1)*1000/2):
 ##                              #print("left")
 ##                              return 0;
-##      
+##
 ##                      # If it last read to the right of center, return the max.
 ##                      else:
 ##                              #print("right")
@@ -249,10 +249,10 @@ class TRSensor(object):
                                         return (self.numSensors - 1)*1000/2
                         else:
                                 print("Dead end! U-turn!")
-                                alphabot.setPWMA(maximum)
-                                alphabot.setPWMB(maximum)
+                                alphabot.setPWMA(27)
+                                alphabot.setPWMB(27)
                                 alphabot.forward()
-                                time.sleep(sleep_time/2)
+                                time.sleep(0.4)
                                 alphabot.uTurn()
                                 while True:
                                         #check sensors to determine when u-turn complete
@@ -270,9 +270,9 @@ class TRSensor(object):
                                 return (self.numSensors - 1)*1000
 
                 self.last_value = avg/sum
-                
+
                 return self.last_value
-        
+
 #use ultrasonic sensor to check for obstacles in front of agent
 def dist():
         GPIO.output(TRIG,GPIO.HIGH)
@@ -298,7 +298,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
         maximum = 27
         sleep_time = 0.5
         turn_time = 0.025
-        
+
         sensor_values = TR.readCalibrated()
 
         #if all sensors over black line, then agent at 4-way intersection ot T-intersection
@@ -402,7 +402,7 @@ GPIO.setup(ECHO,GPIO.IN)
 try:
 
         from AlphaBotv2 import AlphaBot
-        
+
         maximum = 27
         integral = 0;
         last_proportional = 0
@@ -412,7 +412,7 @@ try:
 
         #for T-intersection straight choice edge case
         at_intersection = False
-        
+
         TR = TRSensor()
         Ab = AlphaBot()
         Ab.stop()
@@ -423,7 +423,7 @@ try:
                 print(i)
         print(TR.calibratedMin)
         print(TR.calibratedMax)
-        time.sleep(0.5) 
+        time.sleep(0.5)
         Ab.forward()
         while True:
                 while dist() > obstacle_dist:
@@ -463,17 +463,17 @@ try:
                         Ab.forward()
                         position = TR.readLine(Ab, at_intersection)
                         #print(position)
-                        
+
                         # The "proportional" term should be 0 when we are on the line.
                         proportional = position - 2000
-                        
+
                         # Compute the derivative (change) and integral (sum) of the position.
                         derivative = proportional - last_proportional
                         integral += proportional
-                        
+
                         # Remember the last position.
                         last_proportional = proportional
-          
+
                         '''
                         // Compute the difference between the two motor power settings,
                         // m1 - m2.  If this is a positive number the robot will turn
@@ -483,7 +483,7 @@ try:
                         // the proportional, integral, and derivative terms are multiplied to
                         // improve performance.
                         '''
-                        power_difference = proportional/25 + derivative/100 #+ integral/1000;  
+                        power_difference = proportional/25 + derivative/100 #+ integral/1000;
 
                         if (power_difference > maximum):
                                 power_difference = maximum
@@ -507,5 +507,3 @@ try:
 except KeyboardInterrupt:
         conn.close()
         GPIO.cleanup()
-        
-
