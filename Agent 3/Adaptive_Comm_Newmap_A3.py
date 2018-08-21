@@ -15,11 +15,11 @@ s1.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s1.bind(('192.168.1.253', 12345)) #use its own IP address
 
 #for communicating with Processing
-s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s2.bind(('192.168.1.253', 5204)) #use its own IP address
-s2.listen(1)
-conn, addr = s2.accept()
-print('Connected by', addr)
+# s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# s2.bind(('192.168.1.253', 5204)) #use its own IP address
+# s2.listen(1)
+# conn, addr = s2.accept()
+# print('Connected by', addr)
 
 #for line tracker
 CS = 5
@@ -428,19 +428,19 @@ try:
         while True:
                 while dist() > obstacle_dist:
                         #check if Processing sees another agent
-                        processing_ready = select.select([conn], [], [], 0)
-                        while processing_ready[0]:
-                                data = conn.recv(1024)
-                                print(data.decode('utf-8'))
-                                if data.decode('utf-8').endswith ('hello Agent 1'):
-                                        print('stop')
-                                        Ab.stop()
-                                        time.sleep(1)
-                                        print('restart')
-                                        s1.sendto(b'hello Agent 1', ('192.168.1.224', 12345))
-                                else:
-                                        break
-                                processing_ready = select.select([conn], [], [], 0)
+                        # processing_ready = select.select([conn], [], [], 0)
+                        # while processing_ready[0]:
+                        #         data = conn.recv(1024)
+                        #         print(data.decode('utf-8'))
+                        #         if data.decode('utf-8').endswith ('hello Agent 1'):
+                        #                 print('stop')
+                        #                 Ab.stop()
+                        #                 time.sleep(1)
+                        #                 print('restart')
+                        #                 s1.sendto(b'hello Agent 1', ('192.168.1.224', 12345))
+                        #         else:
+                        #                 break
+                        #         processing_ready = select.select([conn], [], [], 0)
 
                         #check if receiving messages from other agents
                         message_ready = select.select([s1], [], [], 0)
