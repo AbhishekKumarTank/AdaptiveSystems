@@ -19,7 +19,7 @@ GLCapture video;
 color findColor1;
 color findColor2;
 color findColor3;
-float threshold = 15;
+float threshold = 10;
 float distThreshold = 100;
 float size=500;
 int findColorID=-1;
