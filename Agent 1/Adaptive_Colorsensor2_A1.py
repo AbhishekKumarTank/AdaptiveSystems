@@ -3,12 +3,12 @@ import RPi.GPIO as GPIO
 import time
 import random
 import smbus
-#from Lego import *
+from Lego import *
 import socket
 import select
 import Adafruit_TCS34725
 
-#myEV3 = ev3.EV3(protocol = ev3.BLUETOOTH, host = '00:16:53:5c:d7:5c')
+myEV3 = ev3.EV3(protocol = ev3.BLUETOOTH, host = '00:16:53:5c:d7:5c')
 
 #for communicating with other agents
 s1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -357,8 +357,8 @@ def checkIntersect(TR, alphabot, obstacle = False):
                         global dir
                         global x
                         global y
-
-                        print('at', x, ',', y, dir)
+                        
+                        print('at', x, y, dir)
 
                         if dir == "N":
                                 if dir_num == 1:
@@ -496,7 +496,6 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         alphabot.stop()
                                         time.sleep(sleep_time)
                                         return True
-                        print('goint to', x, ',', y, dir)
                 else:
                         alphabot.stop()
         else:
@@ -547,7 +546,7 @@ try:
                                 print(data.decode('utf-8'))
                                 if data.decode('utf-8').endswith( 'hello Agent 3'):
                                         print('stop')
-                                        #print('going to', x, ',', y, dir)
+                                        #print('going to (', x, ',', y, '),', dir)
                                         Ab.stop()
                                         time.sleep(1)
                                         print('restart')
@@ -621,9 +620,9 @@ try:
                 print("Obstacle!")
                 time.sleep(1)
                 at_intersection = checkIntersect(TR, Ab, True)
-##                if not at_intersection:
-##                        remove_obstacle(myEV3)
-##                        time.sleep(1)
+                if not at_intersection:
+                        remove_obstacle(myEV3)
+                        time.sleep(1)
 
 
 
