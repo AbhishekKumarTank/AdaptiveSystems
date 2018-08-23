@@ -370,7 +370,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                 elif dir_num == 3:
                                         y = y - 1
                         elif dir == "E":
-                                elif dir_num == 1:
+                                if dir_num == 1:
                                         y = y + 1
                                         dir = "S"
                                 elif dir_num == 2:
@@ -379,7 +379,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                 elif dir_num == 3:
                                         x = x + 1
                         elif dir == "W":
-                                elif dir_num == 1:
+                                if dir_num == 1:
                                         y = y - 1
                                         dir = "N"
                                 elif dir_num == 2:
@@ -388,7 +388,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                 elif dir_num == 3:
                                         x = x - 1
                         elif dir == "S":
-                                elif dir_num == 1:
+                                if dir_num == 1:
                                         x = x - 1
                                         dir = "W"
                                 elif dir_num == 2:
