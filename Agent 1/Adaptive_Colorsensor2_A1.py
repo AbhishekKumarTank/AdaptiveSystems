@@ -3,12 +3,12 @@ import RPi.GPIO as GPIO
 import time
 import random
 import smbus
-from Lego import *
+#from Lego import *
 import socket
 import select
 import Adafruit_TCS34725
 
-myEV3 = ev3.EV3(protocol = ev3.BLUETOOTH, host = '00:16:53:5c:d7:5c')
+#myEV3 = ev3.EV3(protocol = ev3.BLUETOOTH, host = '00:16:53:5c:d7:5c')
 
 #for communicating with other agents
 s1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -16,11 +16,11 @@ s1.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s1.bind(('192.168.1.224', 12345)) #use its own IP address
 
 #for communicating with Processing
-s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s2.bind(('192.168.1.224', 5204)) #use its own IP address
-s2.listen(1)
-conn, addr = s2.accept()
-print('Connected by', addr)
+# s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# s2.bind(('192.168.1.224', 5204)) #use its own IP address
+# s2.listen(1)
+# conn, addr = s2.accept()
+# print('Connected by', addr)
 
 # for color sensor
 while True:
@@ -194,11 +194,13 @@ class TRSensor(object):
         """
         def readLine(self, alphabot, at_intersection, white_line = 0):
 
-                black_threshold = 200 #to determine if sensor is over black line
+                black_threshold = 500 #to determine if sensor is over black line
                                 #adjust based on tests -- sensors values range from 0 - 1000
                 maximum = 25
                 sleep_time = 0.5
                 turn_time = 0.025
+                global dir
+                global x, y
 
                 sensor_values = self.readCalibrated()
                 avg = 0
@@ -218,15 +220,15 @@ class TRSensor(object):
                                 sum += value;                  #this is for the denominator
 
                 if(on_line != 1):
-##                      # If it last read to the left of center, return 0.
-##                      if(self.last_value < (self.numSensors - 1)*1000/2):
-##                              #print("left")
-##                              return 0;
-##
-##                      # If it last read to the right of center, return the max.
-##                      else:
-##                              #print("right")
-##                              return (self.numSensors - 1)*1000
+                       # # If it last read to the left of center, return 0.
+                       #  if(self.last_value < (self.numSensors - 1)*1000/2):
+                       #         #print("left")
+                       #          return 0;
+                       #
+                       #  # If it last read to the right of center, return the max.
+                       #  else:
+                       #          #print("right")
+                       #          return (self.numSensors - 1)*1000
 
                         print("off line")
                         alphabot.stop()
@@ -297,6 +299,19 @@ class TRSensor(object):
 
                                         time.sleep(turn_time)
                                 print("turn done!")
+                                if (dir == "E"):
+                                        dir = "W"
+                                        x = x - 1
+                                elif (dir == "W"):
+                                        dir = "E"
+                                        x= x + 1
+                                elif (dir == "S"):
+                                        dir = "N"
+                                        y = y - 1
+                                elif (dir == "N"):
+                                        dir = "S"
+                                        y = y + 1
+
                                 alphabot.stop()
                                 time.sleep(sleep_time)
                                 return (self.numSensors - 1)*1000
@@ -328,8 +343,10 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                 #adjust based on tests -- sensors values range from 0 - 1000
         white_threshold = 200 #to determine if sensor is over white area
                                 #adjust based on tests -- sensors values range from 0 - 1000
-        right_flag = False #for checking when right turn complete
-        left_flag = False #for checking when left turn complete
+        right_flag1 = False
+        right_flag2 = False#for checking when right turn complete
+        left_flag1 = False
+        left_flag2 = False #for checking when left turn complete
         backward_flag = False # for checking when backward complete
         maximum = 25
         sleep_time = 0.5
@@ -337,7 +354,6 @@ def checkIntersect(TR, alphabot, obstacle = False):
 
 
         sensor_values = TR.readCalibrated()
-
 
         #if all sensors over black line, then agent at 4-way intersection ot T-intersection
         if ((sensor_values[0] >= black_threshold) and (sensor_values[1] >= black_threshold) and
@@ -349,7 +365,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
                 alphabot.stop()
                 time.sleep(sleep_time)
 
-                if (index <= 7):
+                if (index < len(path)):
                         dir_num = path [index]
                         index = index + 1
 
@@ -357,7 +373,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
                         global dir
                         global x
                         global y
-                        
+
                         print('at', x, y, dir)
 
                         if dir == "N":
@@ -410,10 +426,12 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                                 #then if right most sensor sees white after, the turn is complete
                                                 sensor_values = TR.readCalibrated()
 
-                                                if sensor_values[4] >= black_threshold:
-                                                        right_flag = True
+                                                if sensor_values[0] < white_threshold:
+                                                        right_flag1 = True
+                                                if sensor_values[0] >= black_threshold:
+                                                        right_flag2 = True
 
-                                                if sensor_values[4] < white_threshold and right_flag:
+                                                if sensor_values[0] < white_threshold and right_flag1 and right_flag2 and sensor_values[4] < white_threshold:
                                                         break
 
                                                 time.sleep(turn_time)
@@ -432,10 +450,12 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                                 #then if left most sensor sees white after, the turn is complete
                                                 sensor_values = TR.readCalibrated()
 
-                                                if sensor_values[0] >= black_threshold:
-                                                        left_flag = True
+                                                if sensor_values[4] < white_threshold:
+                                                        left_flag1 = True
+                                                if sensor_values[4] >= black_threshold:
+                                                        left_flag2 = True
 
-                                                if sensor_values[0] < white_threshold and left_flag:
+                                                if sensor_values[4] < white_threshold and left_flag1 and left_flag2 and sensor_values[0] < white_threshold:
                                                         break
 
                                                 time.sleep(turn_time)
@@ -470,7 +490,15 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         alphabot.setPWMA(maximum)
                                         alphabot.setPWMB(maximum)
                                         alphabot.forward()
-                                        time.sleep(0.5)
+                                        time.sleep(1)
+                                        # while True:
+                                        #         sensor_values = TR.readCalibrated()
+                                        #
+                                        #         if ((sensor_values[0] < white_threshold) and (sensor_values[1] < white_threshold) and
+                                        #             (sensor_values[2] < white_threshold) and (sensor_values[3] < white_threshold) and
+                                        #             (sensor_values[4] < white_threshold)):
+                                        #                 break
+                                        #         time.sleep(turn_time)
                                         alphabot.stop()
                                         time.sleep(5)
                                         alphabot.backward()
@@ -498,6 +526,10 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         return True
                 else:
                         alphabot.stop()
+                        # finish task, generate random path
+                        time.sleep(sleep_time)
+                        rand_num = random.randint(1,3)
+                        path.append(rand_num)
         else:
                 return False
 
@@ -540,21 +572,21 @@ try:
         while True:
                 while dist() > obstacle_dist:
                         #check if Processing sees another agent
-                        processing_ready = select.select([conn], [], [], 0)
-                        while processing_ready[0]:
-                                data = conn.recv(1024)
-                                print(data.decode('utf-8'))
-                                if data.decode('utf-8').endswith( 'hello Agent 3'):
-                                        print('stop')
-                                        #print('going to (', x, ',', y, '),', dir)
-                                        Ab.stop()
-                                        time.sleep(1)
-                                        print('restart')
-                                        s1.sendto(b'hello Agent 3', ('192.168.1.253', 12345))
-
-                                else:
-                                        break
-                                processing_ready = select.select([conn], [], [], 0)
+                        # processing_ready = select.select([conn], [], [], 0)
+                        # while processing_ready[0]:
+                        #         data = conn.recv(1024)
+                        #         print(data.decode('utf-8'))
+                        #         if data.decode('utf-8').endswith( 'hello Agent 3'):
+                        #                 print('stop')
+                        #                 #print('going to (', x, ',', y, '),', dir)
+                        #                 Ab.stop()
+                        #                 time.sleep(1)
+                        #                 print('restart')
+                        #                 s1.sendto(b'hello Agent 3', ('192.168.1.253', 12345))
+                        #
+                        #         else:
+                        #                 break
+                        #         processing_ready = select.select([conn], [], [], 0)
 
                         #check if receiving messages from other agents
                         message_ready = select.select([s1], [], [], 0)
