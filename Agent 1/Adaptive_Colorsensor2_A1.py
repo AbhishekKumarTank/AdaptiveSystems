@@ -58,8 +58,12 @@ TRIG = 27
 ECHO = 22
 
 #grid system
-x = 1
-y = 2
+#current
+x1 = 1
+y1 = 2
+#going to
+x2 = 1
+y2 = 2
 dir = "N"
 
 
@@ -200,7 +204,7 @@ class TRSensor(object):
                 sleep_time = 0.5
                 turn_time = 0.025
                 global dir
-                global x, y
+                global x1, y1, x2, y2
 
                 sensor_values = self.readCalibrated()
                 avg = 0
@@ -301,16 +305,16 @@ class TRSensor(object):
                                 print("turn done!")
                                 if (dir == "E"):
                                         dir = "W"
-                                        x = x - 1
+                                        x2 = x2 - 1
                                 elif (dir == "W"):
                                         dir = "E"
-                                        x= x + 1
+                                        x2= x2 + 1
                                 elif (dir == "S"):
                                         dir = "N"
-                                        y = y - 1
+                                        y2 = y2 - 1
                                 elif (dir == "N"):
                                         dir = "S"
-                                        y = y + 1
+                                        y2 = y2 + 1
 
                                 alphabot.stop()
                                 time.sleep(sleep_time)
@@ -371,47 +375,51 @@ def checkIntersect(TR, alphabot, obstacle = False):
 
                         # update location
                         global dir
-                        global x
-                        global y
+                        global x1, y1
+                        global x2, y2
 
-                        print('at', x, y, dir)
+                        x1 = x2
+                        y1 = y2
+                        print('at', x1, y1, dir)
+
 
                         if dir == "N":
                                 if dir_num == 1:
-                                        x = x + 1
+                                        x2 = x1 + 1
                                         dir = "E"
                                 elif dir_num == 2:
-                                        x = x - 1
+                                        x2 = x1 - 1
                                         dir = "W"
                                 elif dir_num == 3:
-                                        y = y - 1
+                                        y2 = y1 - 1
                         elif dir == "E":
                                 if dir_num == 1:
-                                        y = y + 1
+                                        y2 = y1 + 1
                                         dir = "S"
                                 elif dir_num == 2:
-                                        y = y - 1
+                                        y2 = y1 - 1
                                         dir = "N"
                                 elif dir_num == 3:
-                                        x = x + 1
+                                        x2 = x1 + 1
                         elif dir == "W":
                                 if dir_num == 1:
-                                        y = y - 1
+                                        y2 = y1 - 1
                                         dir = "N"
                                 elif dir_num == 2:
-                                        y = y + 1
+                                        y2 = y1 + 1
                                         dir = "S"
                                 elif dir_num == 3:
-                                        x = x - 1
+                                        x2 = x1 - 1
                         elif dir == "S":
                                 if dir_num == 1:
-                                        x = x - 1
+                                        x2 = x1 - 1
                                         dir = "W"
                                 elif dir_num == 2:
-                                        x = x + 1
+                                        x2 = x1 + 1
                                         dir = "E"
                                 elif dir_num == 3:
-                                        y = y + 1
+                                        y2 = y1 + 1
+                        print('going to', x2, y2, dir)
 
 
 
@@ -490,7 +498,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         alphabot.setPWMA(maximum)
                                         alphabot.setPWMB(maximum)
                                         alphabot.forward()
-                                        time.sleep(1)
+                                        time.sleep(0.5)
                                         # while True:
                                         #         sensor_values = TR.readCalibrated()
                                         #
@@ -529,6 +537,27 @@ def checkIntersect(TR, alphabot, obstacle = False):
                         # finish task, generate random path
                         time.sleep(sleep_time)
                         rand_num = random.randint(1,3)
+                        if (x2 == 0 and y2 == 2):
+                                if dir == "W":
+                                        rand_num = 1
+                                if dir == "S":
+                                        rand_num = 2
+                        elif (x2 ==0 and y2 == 0):
+                                if dir == "N":
+                                        rand_num = 1
+                                if dir == "W":
+                                        rand_num = 2
+                        elif (x2 == 2 and y2 == 0):
+                                if dir == "N":
+                                        rand_num = 2
+                                if dir == "E":
+                                        rand_num = 1
+                        elif (x2 == 2 and y2 == 2):
+                                if dir == "S":
+                                        rand_num = 1
+                                if dir == "E":
+                                        rand_num = 2
+
                         path.append(rand_num)
         else:
                 return False
@@ -578,7 +607,7 @@ try:
                         #         print(data.decode('utf-8'))
                         #         if data.decode('utf-8').endswith( 'hello Agent 3'):
                         #                 print('stop')
-                        #                 #print('going to (', x, ',', y, '),', dir)
+                        #                 #print(x1, y1, x2, y2, dir)
                         #                 Ab.stop()
                         #                 time.sleep(1)
                         #                 print('restart')
@@ -652,9 +681,9 @@ try:
                 print("Obstacle!")
                 time.sleep(1)
                 at_intersection = checkIntersect(TR, Ab, True)
-                if not at_intersection:
-                        remove_obstacle(myEV3)
-                        time.sleep(1)
+                # if not at_intersection:
+                #         remove_obstacle(myEV3)
+                #         time.sleep(1)
 
 
 
