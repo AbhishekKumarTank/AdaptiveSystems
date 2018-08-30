@@ -24,6 +24,9 @@ float distThreshold = 100;
 float size=500;
 int findColorID=-1;
 
+String input = " ";
+int data[];
+
 ArrayList<Blob1> blobs1 = new ArrayList<Blob1>();
 ArrayList<Blob2> blobs2 = new ArrayList<Blob2>();
 ArrayList<Blob3> blobs3 = new ArrayList<Blob3>();
@@ -36,7 +39,7 @@ void setup() {
   String[] devices =GLCapture.list();
   video = new GLCapture(this, devices[0],width, height);
   video.start();
-  findColor1 = -15118592;// Agent 3, green
+  findColor1 = -15115264;// Agent 3, green
   findColor2 = -6955132; // Agent 2, not calibrate yet
   findColor3 = -6955132; // Agent 4, not calibrate yet
   smooth();
@@ -171,8 +174,21 @@ void draw() {
   for (Blob3 b: blobs3){
     blobs3.get(0).show();
   }
-
+  
+if (myClient.available() > 0) {
+    input = myClient.readString();
+    println(input);
+    //input = input.substring(0, input.indexOf("\n")); // Only up to the newline
+  }
+    fill(255);
+    noStroke();
+    rectMode(CORNERS);
+    rect(0, height-20, width, height);
+    textSize(14);
+    fill(0);
+    text(input, 0, height-5);
 }
+
 
 
 void mousePressed(){
