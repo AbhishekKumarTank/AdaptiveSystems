@@ -191,19 +191,19 @@ if (myClient.available() > 0) {
     text(input, 0, height-5);
     //image(img, width/2, height/2);
     if(input.equals("straight")==true){
-      translate(width/2, height/2);
-      image(img, 0,0);
+      translate(width/2-95/4, height/2-94/4);
+      image(img, 0,0,img.width/2,img.height/2);
     }
     else if (input.equals("right turn")==true){
-      translate(width, height/2);
+      translate(width/2-95/4, height/2-94/4);
       rotate(PI/2.0); 
-      image(img, 0, 0);
+      image(img, 0, -94/2,img.width/2,img.height/2);
     
     }
     else if(input.equals("left turn")==true){
-      translate(width/2, height);
+      translate(width/2-95/4, height/2-94/4);
       rotate(-PI/2.0); 
-      image(img, 0, 0);
+      image(img, -94/2, 0,img.width/2,img.height/2);
     
     }
 
