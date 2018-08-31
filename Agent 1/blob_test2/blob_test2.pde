@@ -26,6 +26,7 @@ int findColorID=-1;
 
 String input = " ";
 int data[];
+PImage img;
 
 ArrayList<Blob1> blobs1 = new ArrayList<Blob1>();
 ArrayList<Blob2> blobs2 = new ArrayList<Blob2>();
@@ -44,7 +45,7 @@ void setup() {
   findColor3 = -6955132; // Agent 4, not calibrate yet
   smooth();
   myClient = new Client(this,"192.168.1.224",5204); //self:Agent 1, IP adress
-
+  img = loadImage("arrow.png");
 }
 
 void keyPressed() {
@@ -178,15 +179,34 @@ void draw() {
 if (myClient.available() > 0) {
     input = myClient.readString();
     println(input);
+
     //input = input.substring(0, input.indexOf("\n")); // Only up to the newline
   }
-    fill(255);
+     fill(255);
     noStroke();
     rectMode(CORNERS);
     rect(0, height-20, width, height);
     textSize(14);
     fill(0);
     text(input, 0, height-5);
+    //image(img, width/2, height/2);
+    if(input.equals("straight")==true){
+      translate(width/2, height/2);
+      image(img, 0,0);
+    }
+    else if (input.equals("right turn")==true){
+      translate(width, height/2);
+      rotate(PI/2.0); 
+      image(img, 0, 0);
+    
+    }
+    else if(input.equals("left turn")==true){
+      translate(width/2, height);
+      rotate(-PI/2.0); 
+      image(img, 0, 0);
+    
+    }
+
 }
 
 
