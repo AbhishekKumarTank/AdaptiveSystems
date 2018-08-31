@@ -541,12 +541,14 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         return True
                 else:
                         alphabot.stop()
-                        # finish task, generate random path
                         time.sleep(sleep_time)
+                        #task finished, randomly pick direction at intersection
+                        #if obstacle present, limit choices
                         if obstacle:
                                 rand_num = random.randint(1,2)
                         else:
                                 rand_num = random.randint(1,3)
+                        #if at 4 corners, limit choices
                         if (x2 == 0 and y2 == 2):
                                 if dir == "W":
                                         rand_num = 1
