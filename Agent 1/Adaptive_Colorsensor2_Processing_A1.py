@@ -448,8 +448,8 @@ def checkIntersect(TR, alphabot, obstacle = False):
 
                                                 time.sleep(turn_time)
                                         print("turn done!")
-                                        alphabot.stop()
-                                        time.sleep(sleep_time)
+                                        # alphabot.stop()
+                                        # time.sleep(sleep_time)
                                         return True
                         elif dir_num == 2: #left turn
                                         print("left turn!")
@@ -473,8 +473,8 @@ def checkIntersect(TR, alphabot, obstacle = False):
 
                                                 time.sleep(turn_time)
                                         print("turn done!")
-                                        alphabot.stop()
-                                        time.sleep(sleep_time)
+                                        # alphabot.stop()
+                                        # time.sleep(sleep_time)
                                         return True
                         elif dir_num == 3: #straight
                                         print("straight!")
@@ -493,8 +493,8 @@ def checkIntersect(TR, alphabot, obstacle = False):
 
                                                 time.sleep(turn_time)
                                         print("done!")
-                                        alphabot.stop()
-                                        time.sleep(sleep_time)
+                                        # alphabot.stop()
+                                        # time.sleep(sleep_time)
                                         return True
                         elif dir_num == 0: #stop
                                         alphabot.stop()

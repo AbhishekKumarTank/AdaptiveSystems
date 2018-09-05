@@ -188,6 +188,7 @@ if (myClient.available() > 0) {
     rect(0, height-20, width, height);
     textSize(14);
     fill(0);
+    textAlign(LEFT);
     text(input, 0, height-5);
     //image(img, width/2, height/2);
     if(input.equals("straight")==true){
@@ -204,6 +205,13 @@ if (myClient.available() > 0) {
       translate(width/2-95/4, height/2-94/4);
       rotate(-PI/2.0); 
       image(img, -94/2, 0,img.width/2,img.height/2);
+    
+    }
+    else if(input.equals("Arrived!")==true){
+      textSize(20);
+      fill(0);
+      textAlign(CENTER);
+      text("Arrived destination!", width/2, height/2);  
     
     }
 
