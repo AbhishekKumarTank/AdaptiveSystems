@@ -68,6 +68,8 @@ x2 = 1
 y2 = 2
 dir = "N"
 
+random_path = False
+
 
 class TRSensor(object):
         def __init__(self,numSensors = 5):
@@ -358,7 +360,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
         maximum = 25
         sleep_time = 0.5
         turn_time = 0.025
-
+        global random_path
 
         sensor_values = TR.readCalibrated()
 
@@ -542,28 +544,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
                 else:
                         # alphabot.stop()
                         # time.sleep(5)
-                        tcs = Adafruit_TCS34725.TCS34725()
-                        tcs.set_interrupt(False)
-                        r, g, b, c = tcs.get_raw_data()
-                        # Print out the values.
-                        print('Color: red={0} green={1} blue={2} clear={3}'.format(r, g, b, c))
-                        if ((r < 150) and (g > 200) and (b > 270)):
-                        # Enable interrupts and put the chip back to low power sleep/disabled.
-                                tcs.set_interrupt(True)
-                                tcs.disable()
-                                print('blue')
-                                path.extend ([3,3,2,4,2,3,2,1])
-                                conn.send(b'Going to blue destination.')
-
-                        elif ((r > 255) and (g < 150) and (b < 150)):
-                                tcs.set_interrupt(True)
-                                tcs.disable()
-                                path.extend([3,3,1,4,1,3,1,2])
-                                print('red')
-                                conn.send(b'Going to red destination.')
-
-                        elif ((r > 300) and (g > 300) and (b > 200)):
-                                conn.send(b'Following random path.')
+                        if random_path :
                                 #task finished, randomly pick direction at intersection
                                 #if obstacle present, limit choices
                                 if obstacle:
@@ -594,9 +575,36 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                                 rand_num = 2
 
                                 path.append(rand_num)
-
                         else:
-                                alphabot.stop()
+                                tcs = Adafruit_TCS34725.TCS34725()
+                                tcs.set_interrupt(False)
+                                r, g, b, c = tcs.get_raw_data()
+                                # Print out the values.
+                                print('Color: red={0} green={1} blue={2} clear={3}'.format(r, g, b, c))
+                                if ((r < 150) and (g > 200) and (b > 270)):
+                                # Enable interrupts and put the chip back to low power sleep/disabled.
+                                        tcs.set_interrupt(True)
+                                        tcs.disable()
+                                        print('blue')
+                                        path.extend ([3,3,2,4,2,3,2,1])
+                                        conn.send(b'Going to blue destination.')
+
+                                elif ((r > 255) and (g < 150) and (b < 150)):
+                                        tcs.set_interrupt(True)
+                                        tcs.disable()
+                                        path.extend([3,3,1,4,1,3,1,2])
+                                        print('red')
+                                        conn.send(b'Going to red destination.')
+
+                                elif ((r > 300) and (g > 300) and (b > 200)):
+                                        tcs.set_interrupt(True)
+                                        tcs.disable()
+                                        conn.send(b'Following random path.')
+                                        random_path = True
+
+
+                                else:
+                                        alphabot.stop()
                                 #time.sleep(1)
                         #
                         # path.append(rand_num)
