@@ -15,21 +15,31 @@ class Blob1{
   }
   
   void show(int i){
-    stroke(0);
-    fill(255);
+    stroke(findColor1);
+    noFill();
     strokeWeight(2);
     rectMode(CORNERS);
-    rect(minx,miny,maxx,maxy);
-    
-    float cx = (minx + maxx) / 2;
-    float cy = (miny + maxy) / 2;
+    rect(minx, miny, maxx, maxy);
+
+    //float cx = (minx + maxx) / 2;
+    //float cy = (miny + maxy) / 2;
     //println("center1:"+ cx + cy);
     //println("rect size1:" + size());
     //fill(0);
     //ellipse(cx,cy,1,1);
-    textSize(32);
     fill(findColor1);
-    text("Agent1", cx,cy); 
+    rectMode(CORNERS);
+    rect(minx, miny-20, minx+70, miny);
+    textSize(20);
+    fill(0);
+    text("Agent1", minx, miny); 
+    fill(255);
+    noStroke();
+    rectMode(CORNERS);
+    rect(0, 0, width, 20);
+    textSize(14);
+    fill(0);
+    text("Communicating with Agent 1...", 20, 15);
     myClient.write("hello Agent 1");
     
     //for(PVector v: points){

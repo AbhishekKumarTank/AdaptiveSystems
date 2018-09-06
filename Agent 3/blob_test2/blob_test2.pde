@@ -24,6 +24,10 @@ float distThreshold = 100;
 float size=500;
 int findColorID=-1;
 
+String input = " ";
+int data[];
+PImage img;
+
 ArrayList<Blob1> blobs1 = new ArrayList<Blob1>();
 ArrayList<Blob2> blobs2 = new ArrayList<Blob2>();
 ArrayList<Blob3> blobs3 = new ArrayList<Blob3>();
@@ -41,7 +45,7 @@ void setup() {
   findColor3 = -6955132;//Agent 4, not calibrate yet
   smooth();
   myClient = new Client(this,"192.168.1.253",5204);//self(Agent 3) ip
-
+  img = loadImage("arrow.png");
 }
 
 //for color calibration
@@ -180,6 +184,44 @@ for (Blob3 b: blobs3){
 //    rectMode(CENTER);
 //    rect(minX,minY,60,60);
 //  }
+if (myClient.available() > 0) {
+    input = myClient.readString();
+    println(input);
+
+    //input = input.substring(0, input.indexOf("\n")); // Only up to the newline
+  }
+     fill(255);
+    noStroke();
+    rectMode(CORNERS);
+    rect(0, height-20, width, height);
+    textSize(14);
+    fill(0);
+    textAlign(LEFT);
+    text(input, 0, height-5);
+    //image(img, width/2, height/2);
+    if(input.equals("straight")==true){
+      translate(width/2-95/4, height/2-94/4);
+      image(img, 0,0,img.width/2,img.height/2);
+    }
+    else if (input.equals("right turn")==true){
+      translate(width/2-95/4, height/2-94/4);
+      rotate(PI/2.0); 
+      image(img, 0, -94/2,img.width/2,img.height/2);
+    
+    }
+    else if(input.equals("left turn")==true){
+      translate(width/2-95/4, height/2-94/4);
+      rotate(-PI/2.0); 
+      image(img, -94/2, 0,img.width/2,img.height/2);
+    
+    }
+    else if(input.equals("Arrived!")==true){
+      textSize(20);
+      fill(0);
+      textAlign(CENTER);
+      text("Arrived destination!", width/2, height/2);  
+    
+    }
 }
 
 void mousePressed(){
