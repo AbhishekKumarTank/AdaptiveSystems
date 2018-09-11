@@ -204,7 +204,7 @@ class TRSensor(object):
 
                 black_threshold = 500 #to determine if sensor is over black line
                                 #adjust based on tests -- sensors values range from 0 - 1000
-                maximum = 25
+                maximum = 27
                 sleep_time = 0.5
                 turn_time = 0.025
                 global dir
@@ -357,7 +357,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
         left_flag1 = False
         left_flag2 = False #for checking when left turn complete
         backward_flag = False # for checking when backward complete
-        maximum = 25
+        maximum = 27
         sleep_time = 0.5
         turn_time = 0.025
         global random_path
@@ -433,22 +433,23 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         conn.send(b'right turn')
                                         alphabot.setPWMB(maximum)
                                         alphabot.right()
-                                        while True:
-                                                #check sensors to determine when turn complete
-                                                #agent sometimes overshoots intersection when stopping
-                                                #first check if right most sensor sees black
-                                                #then if right most sensor sees white after, the turn is complete
-                                                sensor_values = TR.readCalibrated()
-
-                                                if sensor_values[0] < white_threshold:
-                                                        right_flag1 = True
-                                                if sensor_values[0] >= black_threshold:
-                                                        right_flag2 = True
-
-                                                if sensor_values[0] < white_threshold and right_flag1 and right_flag2 and sensor_values[4] < white_threshold:
-                                                        break
-
-                                                time.sleep(turn_time)
+                                        # while True:
+                                        #         #check sensors to determine when turn complete
+                                        #         #agent sometimes overshoots intersection when stopping
+                                        #         #first check if right most sensor sees black
+                                        #         #then if right most sensor sees white after, the turn is complete
+                                        #         sensor_values = TR.readCalibrated()
+                                        #
+                                        #         if sensor_values[0] < white_threshold:
+                                        #                 right_flag1 = True
+                                        #         if sensor_values[0] >= black_threshold:
+                                        #                 right_flag2 = True
+                                        #
+                                        #         if sensor_values[0] < white_threshold and right_flag1 and right_flag2 and sensor_values[4] < white_threshold:
+                                        #                 break
+                                        #
+                                        #         time.sleep(turn_time)
+                                        time.sleep(0.5)
                                         print("turn done!")
                                         # alphabot.stop()
                                         # time.sleep(sleep_time)
@@ -458,6 +459,8 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         conn.send(b'left turn')
                                         alphabot.setPWMA(maximum)
                                         alphabot.left()
+                                        t1 = time.time()
+                                        print(t1)
                                         while True:
                                                 #check sensors to determine when turn complete
                                                 #agent sometimes overshoots intersection when stopping
@@ -472,9 +475,15 @@ def checkIntersect(TR, alphabot, obstacle = False):
 
                                                 if sensor_values[4] < white_threshold and left_flag1 and left_flag2 and sensor_values[0] < white_threshold:
                                                         break
-
                                                 time.sleep(turn_time)
-                                        print("turn done!")
+                                                t2 = time.time()
+                                        if ((t2 -t1)>= 0.5):
+                                                print(t2)
+                                                print("turn done!")
+                                        else:
+                                                time.sleep(0.5-(t2-t1))
+                                                print(0.5-(t2-t1))
+                                                print("turn done!")
                                         # alphabot.stop()
                                         # time.sleep(sleep_time)
                                         return True
@@ -625,7 +634,7 @@ try:
 
         from AlphaBotv2 import AlphaBot
 
-        maximum = 25
+        maximum = 27
         integral = 0;
         last_proportional = 0
 
