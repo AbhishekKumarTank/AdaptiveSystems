@@ -27,6 +27,7 @@ int findColorID=-1;
 String input = " ";
 int data[];
 PImage img;
+PImage img2;
 
 ArrayList<Blob1> blobs1 = new ArrayList<Blob1>();
 ArrayList<Blob2> blobs2 = new ArrayList<Blob2>();
@@ -46,6 +47,7 @@ void setup() {
   smooth();
   myClient = new Client(this,"192.168.1.224",5204); //self:Agent 1, IP adress
   img = loadImage("arrow.png");
+  img2 = loadImage("u_turn.png");
 }
 
 void keyPressed() {
@@ -206,6 +208,10 @@ if (myClient.available() > 0) {
       rotate(-PI/2.0); 
       image(img, -94/2, 0,img.width/2,img.height/2);
     
+    }
+    else if(input.equals("U-turn")==true){
+      translate(width/2-97/4, height/2-91/4);
+      image(img2, 0,0,img2.width/2,img2.height/2);    
     }
     else if(input.equals("Arrived!")==true){
       textSize(20);
