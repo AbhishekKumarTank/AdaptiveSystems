@@ -29,7 +29,7 @@ while True:
         r, g, b, c = tcs.get_raw_data()
         # Print out the values.
         print('Color: red={0} green={1} blue={2} clear={3}'.format(r, g, b, c))
-        if ((r < 150) and (g > 200) and (b > 270)):
+        if ((r < 220) and (g > 390) and (b > 400)):
         # Enable interrupts and put the chip back to low power sleep/disabled.
                 tcs.set_interrupt(True)
                 tcs.disable()
@@ -37,7 +37,7 @@ while True:
                 path = [3,3,2,4,2,3,2,1]
                 conn.send(b'Going to blue destination.')
                 break
-        elif ((r > 255) and (g < 150) and (b < 150)):
+        elif ((r > 300) and (g < 200) and (b < 230)):
                 tcs.set_interrupt(True)
                 tcs.disable()
                 path = [3,3,1,4,1,3,1,2]
@@ -67,6 +67,7 @@ y1 = 2
 x2 = 1
 y2 = 2
 dir = "N"
+dir_num = 0
 
 random_path = False
 
@@ -204,11 +205,12 @@ class TRSensor(object):
 
                 black_threshold = 500 #to determine if sensor is over black line
                                 #adjust based on tests -- sensors values range from 0 - 1000
-                maximum = 27
+                maximum = 26
                 sleep_time = 0.5
                 turn_time = 0.025
                 global dir
                 global x1, y1, x2, y2
+                global dir_num
 
                 sensor_values = self.readCalibrated()
                 avg = 0
@@ -244,12 +246,9 @@ class TRSensor(object):
                         time.sleep(sleep_time)
 
                         if at_intersection:
-                                print("Was at T-intersection and chose straight ...")
-                                #went straight at a T-intersection and now off line
-                                #need to pick new direction
-                                rand_num = random.randint(1,2)
+                                print("Was at intersection and turn too much ...")
 
-                                if rand_num == 1: #right turn
+                                if dir_num == 2: #right turn
                                         print("right turn!")
                                         alphabot.setPWMB(maximum)
                                         alphabot.right()
@@ -266,7 +265,7 @@ class TRSensor(object):
                                         alphabot.stop()
                                         time.sleep(sleep_time)
                                         return (self.numSensors - 1)*1000
-                                elif rand_num == 2: #left turn
+                                elif dir_num == 1: #left turn
                                         print("left turn!")
                                         alphabot.setPWMA(maximum)
                                         alphabot.left()
@@ -284,14 +283,13 @@ class TRSensor(object):
                                         time.sleep(sleep_time)
                                         return 0
                                 else:
-                                        print("random number error!")
-                                        alphabot.backward()
-                                        time.sleep(sleep_time)
                                         alphabot.stop()
                                         time.sleep(sleep_time)
                                         return (self.numSensors - 1)*1000/2
+
                         else:
                                 print("Dead end! U-turn!")
+                                conn.send(b'U-turn')
                                 alphabot.setPWMA(27)
                                 alphabot.setPWMB(27)
                                 alphabot.forward()
@@ -353,13 +351,16 @@ def checkIntersect(TR, alphabot, obstacle = False):
         white_threshold = 200 #to determine if sensor is over white area
                                 #adjust based on tests -- sensors values range from 0 - 1000
         right_flag1 = False
-        right_flag2 = False#for checking when right turn complete
+        right_flag2 = False
+        right_flag3 = False#for checking when right turn complete
         left_flag1 = False
-        left_flag2 = False #for checking when left turn complete
+        left_flag2 = False
+        left_flag3 = False #for checking when left turn complete
         backward_flag = False # for checking when backward complete
-        maximum = 27
+        maximum = 26
         sleep_time = 0.5
         turn_time = 0.025
+        adjust_time = 0.8
         global random_path
 
         sensor_values = TR.readCalibrated()
@@ -375,6 +376,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
                 time.sleep(sleep_time)
 
                 if (index < len(path)):
+                        global dir_num
                         dir_num = path [index]
                         index = index + 1
 
@@ -433,24 +435,34 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         conn.send(b'right turn')
                                         alphabot.setPWMB(maximum)
                                         alphabot.right()
-                                        # while True:
-                                        #         #check sensors to determine when turn complete
-                                        #         #agent sometimes overshoots intersection when stopping
-                                        #         #first check if right most sensor sees black
-                                        #         #then if right most sensor sees white after, the turn is complete
-                                        #         sensor_values = TR.readCalibrated()
-                                        #
-                                        #         if sensor_values[0] < white_threshold:
-                                        #                 right_flag1 = True
-                                        #         if sensor_values[0] >= black_threshold:
-                                        #                 right_flag2 = True
-                                        #
-                                        #         if sensor_values[0] < white_threshold and right_flag1 and right_flag2 and sensor_values[4] < white_threshold:
-                                        #                 break
-                                        #
-                                        #         time.sleep(turn_time)
-                                        time.sleep(0.5)
-                                        print("turn done!")
+                                        t1 = time.time()
+                                        print(t1)
+                                        while True:
+                                                #check sensors to determine when turn complete
+                                                #agent sometimes overshoots intersection when stopping
+                                                #first check if right most sensor sees black
+                                                #then if right most sensor sees white after, the turn is complete
+                                                sensor_values = TR.readCalibrated()
+
+                                                if sensor_values[0] < white_threshold:
+                                                        right_flag1 = True
+                                                if sensor_values[0] >= black_threshold:
+                                                        right_flag2 = True
+                                                if sensor_values[4] >= black_threshold:
+                                                        right_flag3 = True
+
+                                                if sensor_values[0] < white_threshold and right_flag1 and right_flag2 and right_flag3 and sensor_values[4] < white_threshold:
+                                                        break
+
+                                                time.sleep(turn_time)
+                                                t2 = time.time()
+                                        if ((t2 -t1)>= adjust_time):
+                                                print(t2)
+                                                print("turn done!")
+                                        else:
+                                                time.sleep(adjust_time-(t2-t1))
+                                                print(adjust_time-(t2-t1))
+                                                print("turn done!")
                                         # alphabot.stop()
                                         # time.sleep(sleep_time)
                                         return True
@@ -472,17 +484,19 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                                         left_flag1 = True
                                                 if sensor_values[4] >= black_threshold:
                                                         left_flag2 = True
+                                                if sensor_values[0] >= black_threshold:
+                                                        left_flag3 = True
 
-                                                if sensor_values[4] < white_threshold and left_flag1 and left_flag2 and sensor_values[0] < white_threshold:
+                                                if sensor_values[4] < white_threshold and left_flag1 and left_flag2 and left_flag3 and sensor_values[0] < white_threshold:
                                                         break
                                                 time.sleep(turn_time)
                                                 t2 = time.time()
-                                        if ((t2 -t1)>= 0.5):
+                                        if ((t2 -t1)>= adjust_time):
                                                 print(t2)
                                                 print("turn done!")
                                         else:
-                                                time.sleep(0.5-(t2-t1))
-                                                print(0.5-(t2-t1))
+                                                time.sleep(adjust_time-(t2-t1))
+                                                print(adjust_time-(t2-t1))
                                                 print("turn done!")
                                         # alphabot.stop()
                                         # time.sleep(sleep_time)
@@ -590,7 +604,7 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                 r, g, b, c = tcs.get_raw_data()
                                 # Print out the values.
                                 print('Color: red={0} green={1} blue={2} clear={3}'.format(r, g, b, c))
-                                if ((r < 150) and (g > 200) and (b > 270)):
+                                if ((r < 220) and (g > 390) and (b > 400)):
                                 # Enable interrupts and put the chip back to low power sleep/disabled.
                                         tcs.set_interrupt(True)
                                         tcs.disable()
@@ -598,14 +612,14 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         path.extend ([3,3,2,4,2,3,2,1])
                                         conn.send(b'Going to blue destination.')
 
-                                elif ((r > 255) and (g < 150) and (b < 150)):
+                                elif ((r > 300) and (g < 200) and (b < 230)):
                                         tcs.set_interrupt(True)
                                         tcs.disable()
                                         path.extend([3,3,1,4,1,3,1,2])
                                         print('red')
                                         conn.send(b'Going to red destination.')
 
-                                elif ((r > 300) and (g > 300) and (b > 200)):
+                                elif ((r > 500) and (g > 400) and (b > 180)):
                                         tcs.set_interrupt(True)
                                         tcs.disable()
                                         conn.send(b'Following random path.')
@@ -614,6 +628,8 @@ def checkIntersect(TR, alphabot, obstacle = False):
 
                                 else:
                                         alphabot.stop()
+
+                                return True
                                 #time.sleep(1)
                         #
                         # path.append(rand_num)
@@ -634,7 +650,7 @@ try:
 
         from AlphaBotv2 import AlphaBot
 
-        maximum = 27
+        maximum = 26
         integral = 0;
         last_proportional = 0
 
