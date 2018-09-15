@@ -34,15 +34,15 @@ while True:
                 tcs.set_interrupt(True)
                 tcs.disable()
                 print('blue')
-                path = [3,3,2,4,2,3,2,1]
-                conn.send(b'Going to blue destination.')
+                path = [2,1,3,4,1,1,3,3]
+                conn.send(b'Going to Squarenut.')
                 break
         elif ((r > 300) and (g < 200) and (b < 230)):
                 tcs.set_interrupt(True)
                 tcs.disable()
                 path = [3,3,1,4,1,3,1,2]
                 print('red')
-                conn.send(b'Going to red destination.')
+                conn.send(b'Going to Donut.')
                 break
 
         else:
@@ -609,15 +609,15 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         tcs.set_interrupt(True)
                                         tcs.disable()
                                         print('blue')
-                                        path.extend ([3,3,2,4,2,3,2,1])
-                                        conn.send(b'Going to blue destination.')
+                                        path.extend ([2,1,3,4,1,1,3,3])
+                                        conn.send(b'Going to Squarenut.')
 
                                 elif ((r > 300) and (g < 200) and (b < 230)):
                                         tcs.set_interrupt(True)
                                         tcs.disable()
                                         path.extend([3,3,1,4,1,3,1,2])
                                         print('red')
-                                        conn.send(b'Going to red destination.')
+                                        conn.send(b'Going to Donut.')
 
                                 elif ((r > 500) and (g > 400) and (b > 180)):
                                         tcs.set_interrupt(True)

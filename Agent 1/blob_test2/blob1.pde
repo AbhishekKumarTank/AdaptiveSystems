@@ -40,7 +40,13 @@ class Blob1 {
     textSize(14);
     fill(0);
     text("Communicating with Agent 3...", 20, 15);
-    myClient.write("hello Agent 3");
+    //myClient.write("hello Agent 3");
+    if (maxx < width/2) {
+      myClient.write("on the left");
+    } 
+    else if(minx > width/2){
+      myClient.write("on the right");
+    }
 
     //for(PVector v: points){
     //  stroke(0,0,255);

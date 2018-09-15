@@ -26,16 +26,25 @@ int findColorID=-1;
 
 String input = " ";
 int data[];
-PImage img;
-PImage img2;
+PImage imgArrived;
+PImage imgLeft;
+PImage imgRight;
+PImage imgForward;
+PImage imgDonut;
+PImage imgSquarenut;
+PImage imgU;
+PImage imgED;
+
+boolean Squarenut = false;
+boolean Donut = false;
 
 ArrayList<Blob1> blobs1 = new ArrayList<Blob1>();
 ArrayList<Blob2> blobs2 = new ArrayList<Blob2>();
 ArrayList<Blob3> blobs3 = new ArrayList<Blob3>();
 
 void setup() {
-  //size(640, 480);
-  size(320,240,P2D);
+  size(480, 360,P2D);
+  //size(320,240,P2D);
   noStroke();
   // this will use the first recognized camera
   String[] devices =GLCapture.list();
@@ -46,8 +55,16 @@ void setup() {
   findColor3 = -6955132; // Agent 4, not calibrate yet
   smooth();
   myClient = new Client(this,"192.168.1.224",5204); //self:Agent 1, IP adress
-  img = loadImage("arrow.png");
-  img2 = loadImage("u_turn.png");
+  imgArrived = loadImage("AS_arrived.png");
+  imgLeft = loadImage("AS_left.png");
+  imgRight = loadImage("AS_right.png");
+  imgForward = loadImage("AS_forward.png");
+  imgDonut = loadImage("AS_donut.png");
+  imgSquarenut = loadImage("AS_squarenut.png");
+  imgU = loadImage("AS_uturn.png");
+  imgED = loadImage("AS_empty_destination.png");
+
+  
 }
 
 void keyPressed() {
@@ -77,7 +94,8 @@ void draw() {
   }
   video.loadPixels();
   image(video, 0, 0, width, height);
-  
+  image(imgED, width-imgED.width/4-2, 2, imgED.width/4, imgSquarenut.height/4);
+
   blobs1.clear();
   blobs2.clear();
   blobs3.clear();
@@ -184,41 +202,45 @@ if (myClient.available() > 0) {
 
     //input = input.substring(0, input.indexOf("\n")); // Only up to the newline
   }
-     fill(255);
-    noStroke();
-    rectMode(CORNERS);
-    rect(0, height-20, width, height);
-    textSize(14);
-    fill(0);
-    textAlign(LEFT);
-    text(input, 0, height-5);
-    //image(img, width/2, height/2);
-    if(input.equals("straight")==true){
-      translate(width/2-95/4, height/2-94/4);
-      image(img, 0,0,img.width/2,img.height/2);
+    //fill(255);
+    //noStroke();
+    //rectMode(CORNERS);
+    //rect(0, height-20, width, height);
+    //textSize(14);
+    //fill(0);
+    //textAlign(LEFT);
+    //text(input, 0, height-5);
+    if(input.equals("Going to Squarenut.")==true){
+       Squarenut = true;
+    }
+    else if(input.equals("Going to Donut.")==true){
+       Donut = true;
+    }   
+    else if(input.equals("straight")==true){
+       image(imgForward, 2,2, imgForward.width/4, imgForward.height/4);
     }
     else if (input.equals("right turn")==true){
-      translate(width/2-95/4, height/2-94/4);
-      rotate(PI/2.0); 
-      image(img, 0, -94/2,img.width/2,img.height/2);
-    
+       image(imgRight, 2,2, imgRight.width/4, imgRight.height/4);    
     }
     else if(input.equals("left turn")==true){
-      translate(width/2-95/4, height/2-94/4);
-      rotate(-PI/2.0); 
-      image(img, -94/2, 0,img.width/2,img.height/2);
-    
+       image(imgLeft, 2,2, imgLeft.width/4, imgLeft.height/4);
+
     }
     else if(input.equals("U-turn")==true){
-      translate(width/2-97/4, height/2-91/4);
-      image(img2, 0,0,img2.width/2,img2.height/2);    
+       image(imgU, 2,2, imgU.width/4, imgU.height/4);
     }
     else if(input.equals("Arrived!")==true){
-      textSize(20);
-      fill(0);
-      textAlign(CENTER);
-      text("Arrived destination!", width/2, height/2);  
+       image(imgArrived, width/2-imgArrived.width/8, height/2-imgArrived.height/8, imgArrived.width/4, imgArrived.height/4);
+       Squarenut = false ; 
+       Donut = false ; 
+  }
     
+     
+    if(Squarenut ==true){
+       image(imgSquarenut, width-imgSquarenut.width/4-2, 2, imgSquarenut.width/4, imgSquarenut.height/4);
+    }
+    else if(Donut ==true){
+       image(imgDonut, width-imgDonut.width/4-2, 2, imgDonut.width/4, imgDonut.height/4);
     }
 
 }
