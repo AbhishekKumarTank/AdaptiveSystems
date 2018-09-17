@@ -306,18 +306,6 @@ class TRSensor(object):
 
                                         time.sleep(turn_time)
                                 print("turn done!")
-                                if (dir == "E"):
-                                        dir = "W"
-                                        x2 = x2 - 1
-                                elif (dir == "W"):
-                                        dir = "E"
-                                        x2= x2 + 1
-                                elif (dir == "S"):
-                                        dir = "N"
-                                        y2 = y2 - 1
-                                elif (dir == "N"):
-                                        dir = "S"
-                                        y2 = y2 + 1
 
                                 alphabot.stop()
                                 time.sleep(sleep_time)
@@ -426,6 +414,20 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         dir = "E"
                                 elif dir_num == 3:
                                         y2 = y1 + 1
+
+                        if (x2 < 0 or y2 < 0 or x2 > 2 or y2 > 2):
+                                if (dir == "E"):
+                                        dir = "W"
+                                        x2 = x2 - 1
+                                elif (dir == "W"):
+                                        dir = "E"
+                                        x2= x2 + 1
+                                elif (dir == "S"):
+                                        dir = "N"
+                                        y2 = y2 - 1
+                                elif (dir == "N"):
+                                        dir = "S"
+                                        y2 = y2 + 1
                         print('going to', x2, y2, dir)
 
 
@@ -598,6 +600,160 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                                 rand_num = 2
 
                                 path.append(rand_num)
+
+                                # run the rand_num
+                                dir_num = path [index]
+                                index = index + 1
+
+                                x1 = x2
+                                y1 = y2
+                                print('at', x1, y1, dir)
+
+
+                                if dir == "N":
+                                        if dir_num == 1:
+                                                x2 = x1 + 1
+                                                dir = "E"
+                                        elif dir_num == 2:
+                                                x2 = x1 - 1
+                                                dir = "W"
+                                        elif dir_num == 3:
+                                                y2 = y1 - 1
+                                elif dir == "E":
+                                        if dir_num == 1:
+                                                y2 = y1 + 1
+                                                dir = "S"
+                                        elif dir_num == 2:
+                                                y2 = y1 - 1
+                                                dir = "N"
+                                        elif dir_num == 3:
+                                                x2 = x1 + 1
+                                elif dir == "W":
+                                        if dir_num == 1:
+                                                y2 = y1 - 1
+                                                dir = "N"
+                                        elif dir_num == 2:
+                                                y2 = y1 + 1
+                                                dir = "S"
+                                        elif dir_num == 3:
+                                                x2 = x1 - 1
+                                elif dir == "S":
+                                        if dir_num == 1:
+                                                x2 = x1 - 1
+                                                dir = "W"
+                                        elif dir_num == 2:
+                                                x2 = x1 + 1
+                                                dir = "E"
+                                        elif dir_num == 3:
+                                                y2 = y1 + 1
+
+                                if (x2 < 0 or y2 < 0 or x2 > 2 or y2 > 2):
+                                        if (dir == "E"):
+                                                dir = "W"
+                                                x2 = x2 - 1
+                                        elif (dir == "W"):
+                                                dir = "E"
+                                                x2= x2 + 1
+                                        elif (dir == "S"):
+                                                dir = "N"
+                                                y2 = y2 - 1
+                                        elif (dir == "N"):
+                                                dir = "S"
+                                                y2 = y2 + 1
+                                print('going to', x2, y2, dir)
+
+
+                                if dir_num == 1: #right turn
+                                                print("right turn!")
+                                                conn.send(b'right turn')
+                                                alphabot.setPWMB(maximum)
+                                                alphabot.right()
+                                                t1 = time.time()
+                                                print(t1)
+                                                while True:
+                                                        #check sensors to determine when turn complete
+                                                        #agent sometimes overshoots intersection when stopping
+                                                        #first check if right most sensor sees black
+                                                        #then if right most sensor sees white after, the turn is complete
+                                                        sensor_values = TR.readCalibrated()
+
+                                                        if sensor_values[0] < white_threshold:
+                                                                right_flag1 = True
+                                                        if sensor_values[0] >= black_threshold:
+                                                                right_flag2 = True
+                                                        if sensor_values[4] >= black_threshold:
+                                                                right_flag3 = True
+
+                                                        if sensor_values[0] < white_threshold and right_flag1 and right_flag2 and right_flag3 and sensor_values[4] < white_threshold:
+                                                                break
+
+                                                        time.sleep(turn_time)
+                                                        t2 = time.time()
+                                                if ((t2 -t1)>= adjust_time):
+                                                        print(t2)
+                                                        print("turn done!")
+                                                else:
+                                                        time.sleep(adjust_time-(t2-t1))
+                                                        print(adjust_time-(t2-t1))
+                                                        print("turn done!")
+                                                # alphabot.stop()
+                                                # time.sleep(sleep_time)
+                                                return True
+                                elif dir_num == 2: #left turn
+                                                print("left turn!")
+                                                conn.send(b'left turn')
+                                                alphabot.setPWMA(maximum)
+                                                alphabot.left()
+                                                t1 = time.time()
+                                                print(t1)
+                                                while True:
+                                                        #check sensors to determine when turn complete
+                                                        #agent sometimes overshoots intersection when stopping
+                                                        #first check if left most sensor sees black
+                                                        #then if left most sensor sees white after, the turn is complete
+                                                        sensor_values = TR.readCalibrated()
+
+                                                        if sensor_values[4] < white_threshold:
+                                                                left_flag1 = True
+                                                        if sensor_values[4] >= black_threshold:
+                                                                left_flag2 = True
+                                                        if sensor_values[0] >= black_threshold:
+                                                                left_flag3 = True
+
+                                                        if sensor_values[4] < white_threshold and left_flag1 and left_flag2 and left_flag3 and sensor_values[0] < white_threshold:
+                                                                break
+                                                        time.sleep(turn_time)
+                                                        t2 = time.time()
+                                                if ((t2 -t1)>= adjust_time):
+                                                        print(t2)
+                                                        print("turn done!")
+                                                else:
+                                                        time.sleep(adjust_time-(t2-t1))
+                                                        print(adjust_time-(t2-t1))
+                                                        print("turn done!")
+                                                # alphabot.stop()
+                                                # time.sleep(sleep_time)
+                                                return True
+                                elif dir_num == 3: #straight
+                                                print("straight!")
+                                                conn.send(b'straight')
+                                                alphabot.setPWMA(maximum)
+                                                alphabot.setPWMB(maximum)
+                                                alphabot.forward()
+                                                while True:
+                                                        #check sensors to determine when intersection passed
+                                                        #if left and right most sensors see white, then intersection passed
+                                                        sensor_values = TR.readCalibrated()
+
+                                                        if ((sensor_values[0] < white_threshold) and
+                                                            (sensor_values[4] < white_threshold)):
+                                                                break
+
+                                                        time.sleep(turn_time)
+                                                print("done!")
+                                                # alphabot.stop()
+                                                # time.sleep(sleep_time)
+                                                return True
                         else:
                                 tcs = Adafruit_TCS34725.TCS34725()
                                 tcs.set_interrupt(False)
