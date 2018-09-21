@@ -34,13 +34,13 @@ while True:
                 tcs.set_interrupt(True)
                 tcs.disable()
                 print('blue')
-                path = [2,1,3,4,1,1,3,3]
+                path = [3,3,1,4,1,3,1,2]
                 conn.send(b'Going to Squarenut.')
                 break
-        elif ((r > 300) and (g < 200) and (b < 230)):
+        elif ((r > 300) and (g < 220) and (b < 250)):
                 tcs.set_interrupt(True)
                 tcs.disable()
-                path = [3,3,1,4,1,3,1,2]
+                path = [2,1,3,4,1,1,3,3]
                 print('red')
                 conn.send(b'Going to Donut.')
                 break
@@ -755,6 +755,8 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                                 # time.sleep(sleep_time)
                                                 return True
                         else:
+                                alphabot.stop()
+                                time.sleep(5)
                                 tcs = Adafruit_TCS34725.TCS34725()
                                 tcs.set_interrupt(False)
                                 r, g, b, c = tcs.get_raw_data()
@@ -765,25 +767,27 @@ def checkIntersect(TR, alphabot, obstacle = False):
                                         tcs.set_interrupt(True)
                                         tcs.disable()
                                         print('blue')
-                                        path.extend ([2,1,3,4,1,1,3,3])
+                                        path.extend ([3,3,1,4,1,3,1,2])
                                         conn.send(b'Going to Squarenut.')
 
-                                elif ((r > 300) and (g < 200) and (b < 230)):
+                                elif ((r > 300) and (g < 220) and (b < 250)):
                                         tcs.set_interrupt(True)
                                         tcs.disable()
-                                        path.extend([3,3,1,4,1,3,1,2])
+                                        path.extend([2,1,3,4,1,1,3,3])
                                         print('red')
                                         conn.send(b'Going to Donut.')
 
-                                elif ((r > 500) and (g > 400) and (b > 180)):
-                                        tcs.set_interrupt(True)
-                                        tcs.disable()
-                                        conn.send(b'Following random path.')
-                                        random_path = True
+                                # elif ((r > 500) and (g > 400) and (b > 180)):
+                                #         tcs.set_interrupt(True)
+                                #         tcs.disable()
+                                #         path.extend([2,4,1,1,1,3])
+                                #         print('yellow')
+                                #         conn.send(b'Going to Circle.')
 
 
                                 else:
-                                        alphabot.stop()
+                                        conn.send(b'Following random path.')
+                                        random_path = True
 
                                 return True
                                 #time.sleep(1)
@@ -901,19 +905,17 @@ try:
                         else:
                                 Ab.setPWMB(maximum);
                                 Ab.setPWMA(maximum - power_difference)
-                        # check if arrive destination
-                        # if ((curr == 1) and (next == 2)) or ((curr == 2) and (next == 1)):
-                        #     time.sleep(3)
-                        #     Ab.stop()
-                        #     print("arrive yellow destination")
-                        #     time.sleep(10)
+
                 Ab.stop()
                 print("Obstacle!")
+                #conn.send(b'Obstacle!')
                 time.sleep(1)
                 at_intersection = checkIntersect(TR, Ab, True)
-                # if not at_intersection:
-                #         remove_obstacle(myEV3)
-                #         time.sleep(1)
+                if not at_intersection:
+                        print("Calling EV3...")
+                        conn.send(b'Calling EV3...')
+                        # remove_obstacle(myEV3)
+                        # time.sleep(1)
 
 
 
