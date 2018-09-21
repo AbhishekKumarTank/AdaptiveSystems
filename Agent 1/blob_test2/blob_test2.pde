@@ -34,6 +34,8 @@ PImage imgDonut;
 PImage imgSquarenut;
 PImage imgU;
 PImage imgED;
+PImage imgObstacle;
+PImage imgHelp;
 
 boolean Squarenut = false;
 boolean Donut = false;
@@ -63,6 +65,8 @@ void setup() {
   imgSquarenut = loadImage("AS_squarenut.png");
   imgU = loadImage("AS_uturn.png");
   imgED = loadImage("AS_empty_destination.png");
+  imgObstacle = loadImage("AS_obstacle.png");
+  imgHelp = loadImage("AS_help.png");
 
   
 }
@@ -94,7 +98,7 @@ void draw() {
   }
   video.loadPixels();
   image(video, 0, 0, width, height);
-  image(imgED, width-imgED.width/4-2, 2, imgED.width/4, imgSquarenut.height/4);
+  image(imgED, width-imgED.width/3-2, 2, imgED.width/3, imgED.height/3);
 
   blobs1.clear();
   blobs2.clear();
@@ -217,30 +221,37 @@ if (myClient.available() > 0) {
        Donut = true;
     }   
     else if(input.equals("straight")==true){
-       image(imgForward, 2,2, imgForward.width/4, imgForward.height/4);
+       image(imgForward, 2,2, imgForward.width/3, imgForward.height/3);
     }
     else if (input.equals("right turn")==true){
-       image(imgRight, 2,2, imgRight.width/4, imgRight.height/4);    
+       image(imgRight, 2,2, imgRight.width/3, imgRight.height/3);    
     }
     else if(input.equals("left turn")==true){
-       image(imgLeft, 2,2, imgLeft.width/4, imgLeft.height/4);
+       image(imgLeft, 2,2, imgLeft.width/3, imgLeft.height/3);
 
     }
     else if(input.equals("U-turn")==true){
-       image(imgU, 2,2, imgU.width/4, imgU.height/4);
+       image(imgU, 2,2, imgU.width/3, imgU.height/3);
     }
     else if(input.equals("Arrived!")==true){
-       image(imgArrived, width/2-imgArrived.width/8, height/2-imgArrived.height/8, imgArrived.width/4, imgArrived.height/4);
+       image(imgArrived, width/2-imgArrived.width/6, height/2-imgArrived.height/6, imgArrived.width/3, imgArrived.height/3);
        Squarenut = false ; 
        Donut = false ; 
+  }
+    else if(input.equals("Obstacle!")==true){
+       image(imgObstacle, width/2-imgObstacle.width/6, height/2-imgObstacle.height/6, imgObstacle.width/3, imgObstacle.height/3);
+  }
+      else if(input.equals("Calling EV3...")==true){
+       image(imgHelp, width/2-imgHelp.width/6, height/2-imgHelp.height/6, imgHelp.width/3, imgHelp.height/3);
+
   }
     
      
     if(Squarenut ==true){
-       image(imgSquarenut, width-imgSquarenut.width/4-2, 2, imgSquarenut.width/4, imgSquarenut.height/4);
+       image(imgSquarenut, width-imgSquarenut.width/3-2, 2, imgSquarenut.width/3, imgSquarenut.height/3);
     }
     else if(Donut ==true){
-       image(imgDonut, width-imgDonut.width/4-2, 2, imgDonut.width/4, imgDonut.height/4);
+       image(imgDonut, width-imgDonut.width/3-2, 2, imgDonut.width/3, imgDonut.height/3);
     }
 
 }
