@@ -19,29 +19,56 @@ GLCapture video;
 color findColor1;
 color findColor2;
 color findColor3;
-float threshold = 15;
+float threshold = 10;
 float distThreshold = 100;
 float size=500;
 int findColorID=-1;
+
+String input = " ";
+int data[];
+PImage imgArrived;
+PImage imgLeft;
+PImage imgRight;
+PImage imgForward;
+PImage imgDonut;
+PImage imgSquarenut;
+PImage imgU;
+PImage imgED;
+PImage imgObstacle;
+PImage imgHelp;
+
+boolean Squarenut = false;
+boolean Donut = false;
 
 ArrayList<Blob1> blobs1 = new ArrayList<Blob1>();
 ArrayList<Blob2> blobs2 = new ArrayList<Blob2>();
 ArrayList<Blob3> blobs3 = new ArrayList<Blob3>();
 
 void setup() {
-  //size(640, 480);
-  size(320,240,P2D);
+  size(480, 360,P2D);
+  //size(320,240,P2D);
   noStroke();
   // this will use the first recognized camera
   String[] devices =GLCapture.list();
   video = new GLCapture(this, devices[0],width, height);
   video.start();
-  findColor1 = -15118592;// Agent 3, green
+  findColor1 = -15115264;// Agent 3, green
   findColor2 = -6955132; // Agent 2, not calibrate yet
   findColor3 = -6955132; // Agent 4, not calibrate yet
   smooth();
   myClient = new Client(this,"192.168.1.224",5204); //self:Agent 1, IP adress
+  imgArrived = loadImage("AS_arrived.png");
+  imgLeft = loadImage("AS_left.png");
+  imgRight = loadImage("AS_right.png");
+  imgForward = loadImage("AS_forward.png");
+  imgDonut = loadImage("AS_donut.png");
+  imgSquarenut = loadImage("AS_squarenut.png");
+  imgU = loadImage("AS_uturn.png");
+  imgED = loadImage("AS_empty_destination.png");
+  imgObstacle = loadImage("AS_obstacle.png");
+  imgHelp = loadImage("AS_help.png");
 
+  
 }
 
 void keyPressed() {
@@ -71,7 +98,8 @@ void draw() {
   }
   video.loadPixels();
   image(video, 0, 0, width, height);
-  
+  image(imgED, width-imgED.width/3-2, 2, imgED.width/3, imgED.height/3);
+
   blobs1.clear();
   blobs2.clear();
   blobs3.clear();
@@ -171,8 +199,63 @@ void draw() {
   for (Blob3 b: blobs3){
     blobs3.get(0).show();
   }
+  
+if (myClient.available() > 0) {
+    input = myClient.readString();
+    println(input);
+
+    //input = input.substring(0, input.indexOf("\n")); // Only up to the newline
+  }
+    //fill(255);
+    //noStroke();
+    //rectMode(CORNERS);
+    //rect(0, height-20, width, height);
+    //textSize(14);
+    //fill(0);
+    //textAlign(LEFT);
+    //text(input, 0, height-5);
+    if(input.equals("Going to Squarenut.")==true){
+       Squarenut = true;
+    }
+    else if(input.equals("Going to Donut.")==true){
+       Donut = true;
+    }   
+    else if(input.equals("straight")==true){
+       image(imgForward, 2,2, imgForward.width/3, imgForward.height/3);
+    }
+    else if (input.equals("right turn")==true){
+       image(imgRight, 2,2, imgRight.width/3, imgRight.height/3);    
+    }
+    else if(input.equals("left turn")==true){
+       image(imgLeft, 2,2, imgLeft.width/3, imgLeft.height/3);
+
+    }
+    else if(input.equals("U-turn")==true){
+       image(imgU, 2,2, imgU.width/3, imgU.height/3);
+    }
+    else if(input.equals("Arrived!")==true){
+       image(imgArrived, width/2-imgArrived.width/6, height/2-imgArrived.height/6, imgArrived.width/3, imgArrived.height/3);
+       Squarenut = false ; 
+       Donut = false ; 
+  }
+    else if(input.equals("Obstacle!")==true){
+       image(imgObstacle, width/2-imgObstacle.width/6, height/2-imgObstacle.height/6, imgObstacle.width/3, imgObstacle.height/3);
+  }
+      else if(input.equals("Calling EV3...")==true){
+       image(imgHelp, width/2-imgHelp.width/6, height/2-imgHelp.height/6, imgHelp.width/3, imgHelp.height/3);
+
+  }
+    
+     
+    if(Squarenut ==true){
+       image(imgSquarenut, width-imgSquarenut.width/3-2, 2, imgSquarenut.width/3, imgSquarenut.height/3);
+    }
+    else if(Donut ==true){
+       image(imgDonut, width-imgDonut.width/3-2, 2, imgDonut.width/3, imgDonut.height/3);
+    }
 
 }
+
 
 
 void mousePressed(){
